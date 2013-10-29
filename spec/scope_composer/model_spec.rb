@@ -11,6 +11,7 @@ describe ScopeComposer::Model do
     scope_helper :helper_method, ->(t){ 'hi' }
   
     scope_composer_for :search
+    search_scope :select
     search_scope :limit
     search_scope :offset, prefix: true
     search_helper :tester, ->(t){ t.to_i }
@@ -42,6 +43,13 @@ describe ScopeComposer::Model do
     
     its(:scope_attributes){ should eq({ limit: 10 }) }
     its(:attributes){ should eq({}) }
+    
+    describe "#select" do
+      before(:each){ scope.select(:key1, :key2, :key3) }
+    
+      its(:scope_attributes){ should eq({ limit: 10, select: [:key1, :key2, :key3] }) }
+      
+    end
     
     describe "#where" do
       before(:each){ scope.where( id: 20 ) }
