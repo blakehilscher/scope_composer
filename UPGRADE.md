@@ -1,3 +1,8 @@
+## 0.3.2
+
+* scope given no arguments returns value
+
+
 ## 0.3.1
 
 * scope given multiple arguments will assign an array instead of a value
