@@ -2,23 +2,23 @@
 require 'spec_helper'
 
 describe ScopeComposer::Model do
-  subject do
-    class TestClass
-      include ScopeComposer::Model
-      
-      has_scope_composer
-      scope :say_hi, ->(t){ 'hi' }
-      scope_helper :helper_method, ->(t){ 'hi' }
-      
-      scope_composer_for :search
-      
-      search_scope :limit
-      search_scope :offset, prefix: true
-      search_helper :tester, ->(t){ t.to_i }
-      
-    end
-    TestClass
+
+  class ScopeComposerModelTest
+    include ScopeComposer::Model
+  
+    has_scope_composer
+    scope :say_hi, ->(t){ 'hi' }
+    scope_helper :helper_method, ->(t){ 'hi' }
+  
+    scope_composer_for :search
+    search_scope :limit
+    search_scope :offset, prefix: true
+    search_helper :tester, ->(t){ t.to_i }
+  
   end
+  
+  let(:scope){ ScopeComposerModelTest }
+  subject{ scope }
   
   it { should respond_to :scope_composer_for }
   it { should respond_to :scope_scope }
@@ -32,12 +32,29 @@ describe ScopeComposer::Model do
   it { should_not respond_to :tester }
 
   it "should define a scope helper" do
-    TestClass.say_hi('hi').should respond_to :helper_method
+    ScopeComposerModelTest.say_hi('hi').should respond_to :helper_method
   end
   
-  describe "#where" do
+  describe ".search_scope" do
+    let(:scope){ ScopeComposerModelTest.search_scope.new }
+    subject{ scope }
+    before(:each){ scope.limit(10) }
+    
+    its(:scope_attributes){ should eq({ limit: 10 }) }
+    its(:attributes){ should eq({}) }
+    
+    describe "#where" do
+      before(:each){ scope.where( id: 20 ) }
+    
+      its(:scope_attributes){ should eq({ limit: 10 }) }
+      its(:attributes){ should eq({ id: 20 }) }
+    end
+    
+  end
+  
+  describe ".scope" do
     it "should return self" do
-      subject.limit(1).where( id: 1 ).class.should eq TestClass::SearchScope
+      subject.limit(1).where( id: 1 ).class.should eq ScopeComposerModelTest::SearchScope
     end
   end
   

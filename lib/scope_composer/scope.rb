@@ -92,7 +92,7 @@ class Scope
       # define method
       define_method(name) do |*args|
         # if no value is given, act as a getter and retrieve the value
-        return attributes[name] if args.first.nil?
+        return scope_attributes[name] if args.first.nil?
         # otherwise set the value
         instance_exec(*args, &proc)
         # and return self for chaining
@@ -118,9 +118,9 @@ class Scope
         # init
         value = args.first
         # if no value is given, act as a getter
-        return attributes[name] if value.nil?
+        return scope_attributes[name] if value.nil?
         # otherwise set the value
-        where( name => value )
+        scope_attributes[name] = value
         # and return self for chaining
         return self
       end
@@ -159,6 +159,10 @@ class Scope
 
   def attributes=(attrs)
     @attributes = self.attributes.merge(attrs)
+  end
+  
+  def scope_attributes
+    @scope_attributes ||= {}
   end
   
 end
