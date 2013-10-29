@@ -49,6 +49,8 @@ describe ScopeComposer::Model do
     
       its(:scope_attributes){ should eq({ limit: 10, select: [:key1, :key2, :key3] }) }
       
+      its(:limit){ should eq 10 }
+      its(:select){ should eq [:key1, :key2, :key3] }
     end
     
     describe "#where" do

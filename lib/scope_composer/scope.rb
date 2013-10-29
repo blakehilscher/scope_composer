@@ -116,7 +116,9 @@ class Scope
       # define method
       define_method(name) do |*args|
         # init
-        values = args.count == 1 ? args.first : args
+        values = nil
+        values = args.first if args.count == 1
+        values = args if args.count > 1
         # if no value is given, act as a getter
         return scope_attributes[name] if values.nil?
         # otherwise set the value
