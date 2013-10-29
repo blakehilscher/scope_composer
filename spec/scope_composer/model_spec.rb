@@ -34,5 +34,11 @@ describe ScopeComposer::Model do
   it "should define a scope helper" do
     TestClass.say_hi('hi').should respond_to :helper_method
   end
-
+  
+  describe "#where" do
+    it "should return self" do
+      subject.limit(1).where( id: 1 ).class.should eq TestClass::SearchScope
+    end
+  end
+  
 end

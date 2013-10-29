@@ -150,6 +150,7 @@ class Scope
     attrs = args.extract_options!
     attrs.symbolize_keys!
     self.attributes = attrs
+    self
   end
 
   def attributes
