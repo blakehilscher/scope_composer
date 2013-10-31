@@ -7,7 +7,7 @@ describe ScopeComposer::Model do
     include ScopeComposer::Model
   
     has_scope_composer
-    scope :say_hi, ->(t){ 'hi' }
+    scope :say_hi, ->(t){ scope_attributes[:say_hi] = t  }
     scope_helper :helper_method, ->(t){ 'hi' }
   
     scope_composer_for :search
@@ -34,6 +34,11 @@ describe ScopeComposer::Model do
 
   it "should define a scope helper" do
     ScopeComposerModelTest.say_hi('hi').should respond_to :helper_method
+  end
+
+  it "should define a scope helper" do
+    t = ScopeComposerModelTest.say_hi('test')
+    t.say_hi.should eq 'test'
   end
   
   describe ".search_scope" do

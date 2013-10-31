@@ -92,7 +92,7 @@ class Scope
       # define method
       define_method(name) do |*args|
         # if no value is given, act as a getter and retrieve the value
-        return read_scope_attribute(key) if args.compact.blank?
+        return read_scope_attribute(name) if args.compact.blank?
         # otherwise set the value
         instance_exec(*args, &proc)
         # and return self for chaining
