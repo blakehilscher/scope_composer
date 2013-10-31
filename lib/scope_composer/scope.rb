@@ -163,6 +163,10 @@ class Scope
     @attributes = self.attributes.merge(attrs)
   end
   
+  def scope_attributes=(attrs)
+    @scope_attributes = self.scope_attributes.merge(attrs)
+  end
+  
   def scope_attributes
     @scope_attributes ||= {}
   end
