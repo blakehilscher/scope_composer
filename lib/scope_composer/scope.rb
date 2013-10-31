@@ -92,14 +92,14 @@ class Scope
       # define method
       define_method(name) do |*args|
         # if no value is given, act as a getter and retrieve the value
-        return scope_attributes[name] if args.first.nil?
+        return read_scope_attribute(key) if args.compact.blank?
         # otherwise set the value
         instance_exec(*args, &proc)
         # and return self for chaining
         self
       end
-      define_method("#{name}=") do |value|
-        self.send( name, value )
+      define_method("#{name}=") do |*args|
+        self.send( name, *args )
       end
       # add to scope list
       scopes[name] = proc
@@ -115,19 +115,15 @@ class Scope
       name = name.to_sym
       # define method
       define_method(name) do |*args|
-        # init
-        values = nil
-        values = args.first if args.count == 1
-        values = args if args.count > 1
-        # if no value is given, act as a getter
-        return scope_attributes[name] if values.nil?
-        # otherwise set the value
-        scope_attributes[name] = values
+        # without args return the value
+        return read_scope_attribute(name) if args.compact.blank?
+        # given args, set value
+        self.send("#{name}=", args)
         # and return self for chaining
         return self
       end
       define_method("#{name}=") do |*args|
-        self.send( name, *args )
+        write_scope_attribute(name, *args)
       end
       # add to scoping list
       scopes[name] = nil
@@ -137,15 +133,19 @@ class Scope
   
   delegate :to_param, to: :attributes
   
+  def read_scope_attribute(key)
+    scope_attributes[key]
+  end
+  
+  def write_scope_attribute(key, values)
+    scope_attributes[key] = (values.count == 1) ? values.first : values
+  end
+  
   def assign_attributes(*attrs)
     attrs = attrs.extract_options!
     attrs.each do |key, value|
       self.send("#{key}=", value) if self.respond_to?("#{key}=")
     end
-  end
-  
-  def attributes
-    self.class.scopes.keys.inject({}){|m,k| m.merge( k => attributes[k] ) }
   end
   
   def where(*args)
@@ -154,7 +154,7 @@ class Scope
     self.attributes = attrs
     self
   end
-
+  
   def attributes
     @attributes ||= {}
   end
