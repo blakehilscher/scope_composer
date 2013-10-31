@@ -133,6 +133,13 @@ class Scope
   
   delegate :to_param, to: :attributes
   
+  def scoped
+    s = self.class.new
+    s.attributes = attributes.clone
+    s.scope_attributes = scope_attributes.clone
+    s
+  end
+  
   def read_scope_attribute(key)
     scope_attributes[key]
   end

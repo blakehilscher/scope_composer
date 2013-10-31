@@ -65,6 +65,22 @@ describe ScopeComposer::Model do
       its(:attributes){ should eq({ id: 20 }) }
     end
     
+    describe "#scoped" do
+      before(:each){ scope.where( id: 20 ) }
+      subject{ scope.scoped }
+      
+      its(:attributes){ should eq({ id: 20 }) }
+      
+      it "should not alter the original object" do
+        scope.where( id: 30 )
+        subject.where( id: 40 )
+        scope.attributes.should eq({id: 30})
+        subject.attributes.should eq({id: 40})
+      end
+      
+      
+    end
+    
   end
   
   describe ".scope" do
