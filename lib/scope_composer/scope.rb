@@ -149,6 +149,7 @@ class Scope
   end
   
   def write_scope_attribute(key, values)
+    return unless values.compact.present?
     scope_attributes[key] = (values.count == 1) ? values.first : values
   end
   
