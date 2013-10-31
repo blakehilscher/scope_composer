@@ -8,12 +8,14 @@ describe ScopeComposer::Model do
   
     has_scope_composer
     scope :say_hi, ->(t){ scope_attributes[:say_hi] = t  }
+    
     scope_helper :helper_method, ->(t){ 'hi' }
   
     scope_composer_for :search
     search_scope :select
     search_scope :limit
     search_scope :offset, prefix: true
+    search_scope :value_to_i, ->(value){ scope_attributes[:value_to_i] = value.to_i  }
     search_helper :tester, ->(t){ t.to_i }
   
   end
@@ -65,9 +67,9 @@ describe ScopeComposer::Model do
       its(:attributes){ should eq({ id: 20 }) }
     end
     
-    describe "#scoped" do
+    describe "#clone" do
       before(:each){ scope.where( id: 20 ) }
-      subject{ scope.scoped }
+      subject{ scope.clone }
       
       its(:attributes){ should eq({ id: 20 }) }
       
@@ -78,7 +80,16 @@ describe ScopeComposer::Model do
         subject.attributes.should eq({id: 40})
       end
       
-      
+    end
+    
+    describe "#limit=" do
+      before(:each){ subject.limit = 10 }
+      its(:limit){ should eq 10 }
+    end
+    
+    describe "#value_to_i=" do
+      before(:each){ subject.value_to_i = '10' }
+      its(:value_to_i){ should eq 10 }
     end
     
   end
