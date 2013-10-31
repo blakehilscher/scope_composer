@@ -134,6 +134,10 @@ class Scope
   delegate :to_param, to: :attributes
   
   def scoped
+    self.class.new
+  end
+  
+  def clone
     s = self.class.new
     s.attributes = attributes.clone
     s.scope_attributes = scope_attributes.clone
